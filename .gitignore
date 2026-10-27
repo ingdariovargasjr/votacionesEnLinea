@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+apps/*/.env.local
+apps/*/dist/
+/supabase/.temp/
+.firebase/
+firebase-debug.log
+firebase-debug.*.log

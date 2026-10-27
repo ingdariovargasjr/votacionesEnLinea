@@ -1,0 +1,21 @@
+{
+  "name": "gala-voting-platform",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/api"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev --workspace @gala/api",
+    "dev:web": "npm run dev --workspace @gala/web",
+    "test": "npm test --workspace @gala/api",
+    "build": "npm run build --workspace @gala/api && npm run build --workspace @gala/web",
+    "typecheck": "npm run typecheck --workspace @gala/api && npm run typecheck --workspace @gala/web",
+    "firebase": "firebase"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "firebase-tools": "^15.34.1"
+  }
+}
