@@ -10,8 +10,8 @@
 - Todo cambio funcional se incorpora primero en `testing`; se valida ahí con CI y pruebas manuales antes de promoverlo.
 - La promoción a `producción` se realiza mediante pull request desde `testing`. El PR debe incluir los últimos cambios aprobados de testing, estar actualizado, pasar CI y recibir aprobación; no se permiten commits directos ni despliegues sin aprobar a `producción`.
 - `producción` contiene únicamente el código aprobado y probado en `testing`; los despliegues de producción se ejecutan desde esa rama.
-- Existe un entorno `testing` y otro `production`, cada uno con un proyecto Firebase Hosting, una API Render y un proyecto Supabase independientes.
-- Cada servicio Render queda vinculado a una sola rama (`testing` o `producción`) y requiere despliegue manual después de migrar su base. Firebase también se publica manualmente desde la rama adecuada.
+- Existe un entorno `testing` y otro `production`, cada uno con su API Render y proyecto Supabase independientes. Firebase Hosting usa el proyecto `respeto-6e276` con dos sitios aislados: `votaciones-en-linea-testing` y `votaciones-en-linea`.
+- Cada servicio Render queda vinculado a una sola rama (`testing` o `producción`) y requiere despliegue manual después de migrar su base. Firebase publica solo el target correspondiente desde la rama adecuada.
 - Las migraciones Supabase se aplican manualmente al proyecto seleccionado desde la rama correspondiente, con revisión `--dry-run`; producción requiere aprobación protegida en GitHub.
 - No se copian usuarios, imágenes privadas, secretos ni votos reales a testing. Las pruebas usan datos sintéticos.
 - Las variables públicas de Vite se construyen para el entorno elegido; `service_role`, contraseñas DB, tokens y credenciales Firebase nunca se incluyen en el bundle ni en el repositorio.
@@ -23,13 +23,12 @@
 
 ### Configuración preparada / pendiente de cuentas
 
-Las ramas `testing` y `producción` ya se crearon desde el commit inicial de `main`; el código se subió primero a `testing` y CI pasó. Solo los workflows manuales de despliegue también están en `main` para que GitHub los pueda despachar. Las reglas de rama están activas: `testing` requiere PR y CI; `producción` requiere PR, CI actualizado, una aprobación vigente, resolución de conversaciones y bloquea push directo, force-push y borrado. Los GitHub Environments se crearon y se restringieron a su rama. `producción` se mantiene en el commit base hasta completar pruebas y aprobar el PR. Falta crear/configurar los proyectos Firebase/Supabase, conectar el Blueprint y configurar valores en GitHub/Render. El Supabase actualmente vinculado no se reasigna automáticamente.
+Las ramas `testing` y `producción` ya se crearon desde el commit inicial de `main`; el código se subió primero a `testing` y CI pasó. Solo los workflows manuales de despliegue también están en `main` para que GitHub los pueda despachar. Las reglas de rama están activas: `testing` requiere PR y CI; `producción` requiere PR, CI actualizado, una aprobación vigente, resolución de conversaciones y bloquea push directo, force-push y borrado. Los GitHub Environments se crearon y se restringieron a su rama. Firebase Hosting está configurado en `.firebaserc` para sus dos sitios. `producción` se mantiene en el commit base hasta completar pruebas y aprobar el PR. Falta crear dos proyectos Supabase, cargar los secretos y crear/configurar manualmente los Web Services de Render. No se aceptarán cargos de Blueprint/servicio sin aprobación. El Supabase actualmente vinculado no se reasigna automáticamente.
 
 ### Checklist de cuentas
 
 1. Crear proyectos Supabase separados y configurar Auth/SMTP, Storage y dominios permitidos en ambos.
-2. Crear dos proyectos Firebase y habilitar Hosting. Configurar los dominios Hosting/custom domains como URLs de retorno permitidas en el Supabase correspondiente.
-3. Las ramas ya están creadas desde el mismo commit base. Conectar `render.yaml` desde la rama `testing` como Blueprint al proyecto `votacionesEnLinea`; verifica que `gala-voting-api-testing` quede en el entorno Render `Testing` y `gala-voting-api-production` en `Production`. Asigna a cada servicio sus propias URL/anon key/service role, correo superusuario, URL del frontend y CORS. El deploy automático queda desactivado para permitir migrar la base primero.
-4. Crear GitHub Environments `testing` y `production`; exigir revisores para `production`. Proteger `testing` y `producción`; en `producción`, requerir pull request, CI exitoso, rama actualizada con su base, descartar aprobaciones obsoletas y bloquear pushes/force-push directos.
-5. Cargar en cada Environment las variables/secretos enumerados en README; nunca reutilizar service-role keys ni contraseñas entre entornos.
-6. Integrar cambios solo primero en `testing`, ejecutar migraciones y smoke tests allí; después abrir el PR `testing` → `producción` y desplegar producción únicamente cuando tenga aprobación vigente y CI verde.
+2. En Render, crear manualmente una API Web Service por entorno y conectar cada una a su rama; detenerse si el flujo exige aprobar un plan con costo.
+3. Cargar en GitHub Environments y Render las variables/secretos enumerados en README; nunca reutilizar service-role keys o contraseñas DB entre entornos.
+4. Configurar en cada Supabase el dominio Firebase de su entorno como URL de retorno permitida; Firebase ya tiene los sitios de producción y testing mapeados.
+5. Integrar cambios primero en `testing`, ejecutar migraciones y smoke tests; después abrir el PR `testing` → `producción` y publicar producción solo con aprobación y CI verde.
