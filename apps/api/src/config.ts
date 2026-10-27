@@ -1,5 +1,3 @@
-import "dotenv/config";
-
 const csv = (value: string | undefined) =>
   (value ?? "").split(",").map((entry) => entry.trim()).filter(Boolean);
 const publicWebUrl = (process.env.PUBLIC_WEB_URL ?? csv(process.env.CORS_ORIGINS)[0] ?? "http://localhost:5173").replace(/\/$/, "");

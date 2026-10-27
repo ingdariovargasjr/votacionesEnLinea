@@ -44,13 +44,12 @@ jobs:
       - run: npm ci
       - name: Validate target configuration and API health
         env:
-          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
         run: |
           set -euo pipefail
-          for variable in FIREBASE_PROJECT_ID VITE_API_URL VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
+          for variable in VITE_API_URL VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
             if [[ -z "${!variable}" ]]; then echo "Missing GitHub environment variable: $variable" >&2; exit 1; fi
           done
           api_url="${VITE_API_URL%/}"
@@ -66,5 +65,5 @@ jobs:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
       - name: Deploy to the selected Firebase project
         env:
-          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
-        run: npm exec -- firebase deploy --only hosting --project "$FIREBASE_PROJECT_ID" --non-interactive
+          TARGET_ENVIRONMENT: ${{ inputs.environment }}
+        run: npm exec -- firebase deploy --only "hosting:$TARGET_ENVIRONMENT" --project respeto-6e276 --non-interactive

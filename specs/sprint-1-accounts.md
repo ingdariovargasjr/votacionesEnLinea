@@ -29,5 +29,5 @@
 - `profiles.id` referencia `auth.users.id`; las galas se vinculan a `owner_id` y no a una cookie.
 - La cuenta inicial se autoriza mediante el email verificado configurado en el servidor. El frontend no tiene controles para elegir rol/plan.
 - `ADMIN_USER_IDS` existe solo como compatibilidad temporal con ADM-01; se elimina una vez configurado y probado `SUPERUSER_EMAIL`.
-- Para desarrollo local, configurar `SUPERUSER_EMAIL` en `apps/api/.env`. En Render se agrega como variable del servicio API.
+- Para desarrollo local, configurar `SUPERUSER_EMAIL` en `apps/api/.env`. En Cloudflare Workers se configura como secreto del Worker correspondiente.
 - El primer acceso de otro usuario puede registrarse, pero verá que debe pagar. Hasta elegir e integrar un proveedor, solo el superusuario podrá crear galas.

@@ -7,7 +7,7 @@ El orden combina valor de producto y riesgo técnico. Los ítems P0 deben resolv
 | P0 | SPIKE-01 | Probar qué señales de follow/like ofrecen oficialmente Facebook, Instagram y TikTok; decidir alternativa para las que no se puedan verificar. | Cerrado para MVP: confirmación manual no verificada |
 | P0 | SPIKE-02 | Elegir identidad de participante persistente entre iframes/sitios y probar cookies/Storage Access en navegadores objetivo. | Decidido: solo navegador; validar particionado antes de publicar |
 | P1 | AUTH-01 | Registro/login recuperable, perfiles persistentes, superusuario gratuito y bloqueo de galas para cuentas sin pago activo. | Código listo; pendiente migración/correo |
-| P1 | OPS-02 | Separar testing y producción con ramas `testing`/`producción` desde `main`, Firebase Hosting, Render, Supabase, CI y promoción aprobada. | Ramas y protecciones GitHub activas; CI pasa en testing; pendientes proyectos cloud y Render Blueprint |
+| P1 | OPS-02 | Separar testing y producción con ramas `testing`/`producción` desde `main`, Firebase Hosting, Cloudflare Workers, Supabase, CI y promoción aprobada. | Worker testing adaptado y dry-run local pasa; Firebase con dos sitios; pendientes autenticación Cloudflare, Supabase/secretos y despliegues de prueba |
 | P1 | ADM-01 | Crear y editar una gala y sus votaciones/ternas como borradores. | Validada con Supabase |
 | P1 | ADM-02 | Configurar nominados, regla de voto, zona horaria y programa social asociado a una votación. | Implementada y migración aplicada; validar flujo autenticado |
 | P1 | THEME-01 | Personalizar colores de botones y tipografía por gala, con vista previa. | Implementada; migración aplicada |
@@ -35,4 +35,4 @@ El orden combina valor de producto y riesgo técnico. Los ítems P0 deben resolv
 - Criterios de aceptación automatizados (unitarios y API; Playwright para el flujo iframe cuando exista el frontend).
 - Migración Supabase revisable y política de acceso probada; ningún secreto privilegiado en el bundle Vue.
 - Estados de error y carga; navegación por teclado; diseño móvil; logs sin credenciales ni datos sociales innecesarios.
-- Documentación de variables de entorno y despliegue en Firebase/Render/Supabase. La historia de votos requiere además prueba de concurrencia.
+- Documentación de variables de entorno y despliegue en Firebase/Cloudflare Workers/Supabase. La historia de votos requiere además prueba de concurrencia.

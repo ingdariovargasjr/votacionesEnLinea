@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dev:workers": "wrangler dev --config ../../wrangler.jsonc",
+    "deploy:workers:testing": "wrangler deploy --config ../../wrangler.jsonc",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "test": "tsx --test src/schemas/events.test.ts src/schemas/themes.test.ts src/schemas/embed-origins.test.ts src/schemas/votes.test.ts src/schemas/social-confirmations.test.ts src/lib/image-validation.test.ts src/lib/embed-token.test.ts src/lib/participant-token.test.ts src/middleware/account-auth.test.ts",
@@ -22,6 +24,7 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "wrangler": "^4.154.0"
   }
 }
