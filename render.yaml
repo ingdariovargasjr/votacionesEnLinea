@@ -8,6 +8,7 @@ projects:
           - type: web
             name: gala-voting-api-testing
             runtime: node
+            plan: free
             branch: testing
             autoDeployTrigger: 'off'
             buildCommand: npm ci && npm run build --workspace @gala/api
