@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f8">
+  <title>Votaciones de la gala</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f7f5f8;
+      --surface: #ffffff;
+      --surface-raised: #fff;
+      --surface-muted: #f5f1f6;
+      --text: #211b26;
+      --muted: #77717d;
+      --line: #e9e3eb;
+      --accent: #d20a9b;
+      --accent-strong: #b90b89;
+      --accent-soft: #f7d8ef;
+      --accent-pale: #fff0fa;
+      --success: #12805c;
+      --success-soft: #e6f6ef;
+      --warning: #99620b;
+      --warning-soft: #fff4dc;
+      --shadow: 0 14px 40px rgba(42, 22, 44, .07);
+      --radius: 22px;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --page: #15121a;
+      --surface: #211c27;
+      --surface-raised: #29232f;
+      --surface-muted: #302936;
+      --text: #f8f3fa;
+      --muted: #b4aab9;
+      --line: #413748;
+      --accent: #f044bc;
+      --accent-strong: #ff70d0;
+      --accent-soft: #552044;
+      --accent-pale: #382035;
+      --success: #64d4a5;
+      --success-soft: #183b30;
+      --warning: #f1c46d;
+      --warning-soft: #463719;
+      --shadow: 0 14px 40px rgba(0, 0, 0, .22);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+      font: 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: background .2s, color .2s;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1120px;
+      margin: auto;
+      padding: 18px 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 850; letter-spacing: -.04em; }
+    .brand-mark {
+      display: grid; place-items: center; width: 39px; height: 39px; border-radius: 13px;
+      color: #fff; background: linear-gradient(145deg, #f05dbb, #b5089c); font-size: 20px;
+      box-shadow: 0 6px 18px #d20a9b44;
+    }
+    .brand small { display: block; color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+    .top-actions { display: flex; align-items: center; gap: 9px; }
+    .icon-button, .quiet-button, .primary-button, .outline-button, .text-button, .round-button {
+      border: 0; cursor: pointer; transition: transform .15s, background .15s, opacity .15s;
+    }
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 3px solid #e654bd88; outline-offset: 2px;
+    }
+    .icon-button, .quiet-button, .outline-button {
+      min-height: 42px; padding: 0 15px; border: 1px solid var(--line); border-radius: 13px;
+      background: var(--surface); font-weight: 700;
+    }
+    .icon-button { width: 43px; padding: 0; font-size: 18px; }
+    .quiet-button { color: var(--text); }
+    .quiet-button.active { border-color: var(--accent); color: var(--accent-strong); background: var(--accent-pale); }
+    main { max-width: 1120px; margin: auto; padding: 4px 24px 50px; }
+    .hero {
+      position: relative; overflow: hidden; padding: 30px 28px 24px; border: 1px solid var(--line);
+      border-radius: 28px; background: var(--surface); text-align: center; box-shadow: var(--shadow);
+    }
+    .hero::before, .hero::after { position: absolute; content: ""; border-radius: 50%; filter: blur(2px); pointer-events: none; }
+    .hero::before { width: 210px; height: 210px; left: -120px; top: -115px; background: #ed83ce36; }
+    .hero::after { width: 250px; height: 250px; right: -155px; bottom: -180px; background: #a992ef2b; }
+    .eyebrow { margin: 0 0 9px; color: var(--accent-strong); font-size: 12px; font-weight: 850; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { max-width: 770px; margin: 0 auto; font-size: clamp(25px, 4.2vw, 42px); line-height: 1.12; letter-spacing: -.045em; }
+    .hero-copy { max-width: 640px; margin: 12px auto 0; color: var(--muted); }
+    .event-logo {
+      display: inline-flex; flex-direction: column; position: relative; margin: 20px auto 0; padding: 8px 26px 10px;
+      color: #fff; background: linear-gradient(130deg, #f06bc8 4%, #c314a9 50%, #7b37c7 100%);
+      border: 3px solid #fff; border-radius: 19px 7px 18px 8px; box-shadow: 0 7px 0 #9c2d87, 0 12px 25px #c20c9940;
+      transform: rotate(-2deg); text-shadow: 1px 2px 0 #9f2080; line-height: .92;
+    }
+    .event-logo span:first-child { font-size: clamp(22px, 4vw, 35px); font-weight: 1000; letter-spacing: -.05em; }
+    .event-logo span:last-child { margin-top: 5px; font-size: 12px; font-weight: 900; letter-spacing: .12em; }
+    .demo-note {
+      display: flex; align-items: flex-start; gap: 10px; margin: 18px 0 25px; padding: 13px 16px;
+      border: 1px solid #eedba9; border-radius: 14px; background: var(--warning-soft); color: var(--warning); font-size: 13px;
+    }
+    .demo-note strong { color: var(--text); }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 30px 2px 14px; }
+    .section-heading h2 { margin: 0; font-size: clamp(22px, 3vw, 28px); letter-spacing: -.04em; }
+    .section-heading p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
+    .category-tabs { display: flex; gap: 9px; overflow-x: auto; padding: 2px 1px 12px; scrollbar-width: thin; }
+    .category-tab {
+      flex: 0 0 auto; padding: 10px 15px; border: 1px solid var(--line); border-radius: 13px;
+      background: var(--surface); color: var(--muted); font-weight: 750; cursor: pointer;
+    }
+    .category-tab[aria-selected="true"] { border-color: var(--accent); background: var(--accent-pale); color: var(--accent-strong); }
+    .vote-panel { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .vote-header { padding: 24px 26px 17px; text-align: center; }
+    .vote-header h3 { margin: 0; font-size: clamp(21px, 3vw, 27px); letter-spacing: -.035em; }
+    .vote-header p { margin: 7px auto 0; max-width: 650px; color: var(--muted); }
+    .rule-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 11px; padding: 5px 10px; border-radius: 99px; background: var(--accent-pale); color: var(--accent-strong); font-size: 12px; font-weight: 800; }
+    .vote-body { max-width: 760px; margin: auto; padding: 2px 24px 20px; }
+    .social-gate { margin: 4px 0 16px; padding: 16px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface-muted); }
+    .social-gate h4 { margin: 0; font-size: 15px; }
+    .social-gate > p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
+    .social-task { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .social-icon { display: grid; place-items: center; flex: 0 0 35px; width: 35px; height: 35px; border-radius: 11px; background: var(--accent-pale); color: var(--accent-strong); font-size: 13px; font-weight: 900; }
+    .social-info { flex: 1; min-width: 0; }
+    .social-info strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+    .social-info small { display: block; color: var(--muted); font-size: 12px; }
+    .social-task a { flex: 0 0 auto; color: var(--accent-strong); font-size: 12px; font-weight: 800; text-decoration: none; }
+    .social-task a:hover { text-decoration: underline; }
+    .check-label { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; color: var(--muted); font-size: 12px; cursor: pointer; }
+    .check-label input { accent-color: var(--accent); width: 17px; height: 17px; }
+    .social-complete { margin-top: 10px; color: var(--success); font-size: 13px; font-weight: 750; }
+    .gate-locked { margin: 11px 0 0; padding: 10px 12px; border-radius: 11px; background: var(--warning-soft); color: var(--warning); font-size: 13px; }
+    .nominees { display: grid; gap: 11px; }
+    .nominee {
+      display: flex; align-items: center; gap: 14px; min-height: 82px; padding: 10px 12px;
+      border: 1.5px solid var(--line); border-radius: 14px; background: var(--surface-raised); transition: border .15s, background .15s;
+    }
+    .nominee.selected { border-color: var(--accent); background: var(--accent-pale); }
+    .avatar {
+      position: relative; display: grid; place-items: center; flex: 0 0 56px; width: 56px; height: 56px; overflow: hidden;
+      border: 2px solid #fff; border-radius: 13px; background: linear-gradient(140deg, #9a39c8, #fa78ae 50%, #f6b974);
+      color: #fff; font-size: 20px; font-weight: 900; box-shadow: 0 2px 8px #55204b2b;
+    }
+    .avatar img { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .nominee-name { flex: 1; min-width: 0; font-weight: 760; line-height: 1.3; }
+    .nominee-name small { display: block; margin-top: 3px; color: var(--muted); font-weight: 500; font-size: 12px; }
+    .select-control { display: flex; align-items: center; gap: 12px; }
+    .round-button { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 23px; font-weight: 550; line-height: 1; }
+    .round-button:disabled { opacity: .35; cursor: not-allowed; }
+    .round-button.secondary { background: var(--accent-soft); color: var(--accent-strong); }
+    .vote-count { min-width: 15px; text-align: center; font-size: 17px; font-weight: 850; }
+    .radio-control { width: 23px; height: 23px; accent-color: var(--accent); cursor: pointer; }
+    .progress-row { display: flex; justify-content: space-between; gap: 10px; margin: 17px 1px 7px; font-size: 13px; font-weight: 750; }
+    .progress-track { height: 8px; overflow: hidden; border-radius: 99px; background: var(--surface-muted); }
+    .progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #ef75ca, var(--accent)); transition: width .2s; }
+    .vote-footer { padding: 15px 24px 21px; border-top: 1px solid var(--line); background: var(--surface); }
+    .primary-button { display: block; width: 100%; min-height: 49px; border-radius: 13px; background: linear-gradient(100deg, #e98cdb, var(--accent)); color: #fff; font-size: 14px; font-weight: 900; letter-spacing: .04em; }
+    .primary-button:hover:not(:disabled) { background: linear-gradient(100deg, #df66ca, var(--accent-strong)); }
+    .primary-button:disabled { cursor: not-allowed; opacity: .52; }
+    .vote-hint { margin: 9px 0 0; color: var(--muted); text-align: center; font-size: 12px; }
+    .empty-state { padding: 38px 20px; border: 1px dashed var(--line); border-radius: 18px; color: var(--muted); text-align: center; }
+    .success-banner { margin: 0 0 15px; padding: 14px 16px; border: 1px solid #b5e5cf; border-radius: 14px; background: var(--success-soft); color: var(--success); font-weight: 750; }
+    footer { margin: 26px auto 0; color: var(--muted); text-align: center; font-size: 12px; }
+    .admin-panel { margin-top: 26px; }
+    .admin-intro { margin-bottom: 18px; }
+    .admin-intro h2 { margin: 0; font-size: 27px; letter-spacing: -.04em; }
+    .admin-intro p { margin: 4px 0 0; color: var(--muted); }
+    .admin-warning { padding: 13px 15px; border-radius: 13px; background: var(--warning-soft); color: var(--warning); font-size: 13px; }
+    .admin-section { margin-top: 15px; padding: 20px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); }
+    .admin-section h3 { margin: 0 0 14px; font-size: 17px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 13px; }
+    .field { display: grid; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: 13px; font-weight: 750; }
+    .field input, .field textarea, .field select { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 11px; background: var(--surface-raised); color: var(--text); }
+    .field textarea { min-height: 97px; resize: vertical; }
+    .field .help { color: var(--muted); font-size: 11px; }
+    .admin-category { margin-top: 13px; padding: 15px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-muted); }
+    .admin-category-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .admin-category-head strong { font-size: 14px; }
+    .text-button { padding: 5px 8px; background: transparent; color: #cc426f; font-size: 12px; font-weight: 800; }
+    .admin-social-row { display: grid; grid-template-columns: 120px 1fr 1.2fr auto; align-items: end; gap: 9px; margin-top: 10px; }
+    .admin-social-row .field label { font-size: 11px; }
+    .outline-button { color: var(--accent-strong); }
+    .admin-actions { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+    .admin-actions .primary-button { width: auto; min-width: 180px; padding: 0 20px; }
+    .save-status { color: var(--success); font-size: 13px; font-weight: 700; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .stat-card { padding: 13px; border-radius: 12px; background: var(--surface-muted); }
+    .stat-card strong { display: block; font-size: 22px; }
+    .stat-card span { color: var(--muted); font-size: 12px; }
+    .admin-results { display: grid; gap: 10px; margin-top: 12px; }
+    .result-category { padding: 13px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-muted); }
+    .result-category > strong { display: block; margin-bottom: 8px; font-size: 14px; }
+    .result-line { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; color: var(--muted); font-size: 13px; }
+    .result-line b { color: var(--text); }
+    [hidden] { display: none !important; }
+    @media (max-width: 620px) {
+      .topbar { padding: 13px 15px; }
+      .brand { gap: 8px; font-size: 14px; }
+      .top-actions { gap: 6px; }
+      .quiet-button { min-height: 39px; padding: 0 10px; font-size: 13px; }
+      .icon-button { width: 39px; min-height: 39px; }
+      main { padding: 2px 14px 35px; }
+      .hero { padding: 24px 17px 20px; border-radius: 22px; }
+      .demo-note { margin-top: 14px; }
+      .section-heading { display: block; margin-top: 25px; }
+      .vote-header { padding: 20px 16px 14px; }
+      .vote-body { padding: 2px 12px 15px; }
+      .nominee { gap: 10px; min-height: 72px; padding: 8px; }
+      .avatar { flex-basis: 49px; width: 49px; height: 49px; }
+      .select-control { gap: 8px; }
+      .round-button { width: 37px; height: 37px; }
+      .vote-footer { padding: 13px 13px 16px; }
+      .social-task { flex-wrap: wrap; gap: 9px; }
+      .social-info { min-width: calc(100% - 55px); }
+      .social-task a { margin-left: 44px; }
+      .check-label { margin-left: auto; }
+      .admin-section { padding: 15px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .admin-social-row { grid-template-columns: 1fr 1fr; }
+      .admin-social-row .field:nth-child(3) { grid-column: 1 / -1; }
+      .admin-social-row button { min-height: 40px; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span><span id="brandName">Gala de creadores</span><small>Votación del público</small></span></div>
+    <div class="top-actions">
+      <button class="icon-button" id="themeToggle" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar tema">☾</button>
+      <button class="quiet-button" id="adminToggle" type="button" aria-expanded="false">⚙ Configurar</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="publicView">
+      <div class="hero">
+        <p class="eyebrow" id="heroEyebrow">La gala del año</p>
+        <h1 id="eventTitle"></h1>
+        <p class="hero-copy" id="eventDescription"></p>
+        <div class="event-logo" aria-label="Identidad de la gala"><span id="logoTitle"></span><span id="logoSubtitle"></span></div>
+      </div>
+      <div class="demo-note" role="note"><span aria-hidden="true">ⓘ</span><div><strong>Versión de demostración.</strong> Los votos y las confirmaciones sociales se guardan solo en este navegador. Para una votación pública segura se necesita un servidor; los likes y seguimientos no se pueden verificar desde esta página.</div></div>
+      <div class="section-heading"><div><h2>Elige a tus favoritos</h2><p>Selecciona una categoría para participar.</p></div></div>
+      <div id="categoryTabs" class="category-tabs" role="tablist" aria-label="Categorías de votación"></div>
+      <div id="voteContent" aria-live="polite"></div>
+    </section>
+
+    <section id="adminView" class="admin-panel" hidden>
+      <div class="admin-intro"><h2>Configura tu gala</h2><p>Edita el evento, las categorías, los nominados y las páginas sociales requeridas.</p></div>
+      <div class="admin-warning"><strong>Solo modo demo:</strong> esta configuración no tiene contraseña ni se sincroniza entre dispositivos. No la uses para administrar una votación oficial.</div>
+      <form id="adminForm">
+        <section class="admin-section">
+          <h3>Datos del evento</h3>
+          <div class="form-grid">
+            <div class="field"><label for="configBrand">Nombre corto de la gala</label><input id="configBrand" maxlength="48" required></div>
+            <div class="field"><label for="configEyebrow">Texto destacado</label><input id="configEyebrow" maxlength="48"></div>
+            <div class="field full"><label for="configTitle">Título principal</label><input id="configTitle" maxlength="120" required></div>
+            <div class="field full"><label for="configDescription">Descripción</label><textarea id="configDescription" maxlength="240"></textarea></div>
+            <div class="field"><label for="configLogoTitle">Texto grande del logo</label><input id="configLogoTitle" maxlength="36"></div>
+            <div class="field"><label for="configLogoSubtitle">Subtítulo del logo</label><input id="configLogoSubtitle" maxlength="48"></div>
+          </div>
+        </section>
+        <section class="admin-section">
+          <h3>Categorías y nominados</h3>
+          <p class="field help">Cada categoría puede permitir un voto diario o cinco votos diarios. Escribe un nominado por línea.</p>
+          <div id="categoryEditor"></div>
+          <button type="button" class="outline-button" id="addCategory" style="margin-top:12px">＋ Añadir categoría</button>
+        </section>
+        <section class="admin-section">
+          <h3>Requisitos para desbloquear los cinco votos</h3>
+          <p class="field help">Añade las páginas de Facebook, Instagram o TikTok que quieres mostrar. En esta demo la persona confirma manualmente que ya las siguió.</p>
+          <div id="socialEditor"></div>
+          <button type="button" class="outline-button" id="addSocial" style="margin-top:12px">＋ Añadir página social</button>
+        </section>
+        <section class="admin-section">
+          <h3>Actividad guardada en este navegador</h3>
+          <div id="adminStats" class="stats-grid"></div>
+          <h3 style="margin:18px 0 0">Conteo de votos por nominado</h3>
+          <p class="field help">Conteo local de esta demostración; no representa votos de otros visitantes.</p>
+          <div id="adminResults" class="admin-results"></div>
+        </section>
+        <div class="admin-actions"><button class="primary-button" type="submit">GUARDAR CONFIGURACIÓN</button><span id="saveStatus" class="save-status" role="status"></span></div>
+      </form>
+    </section>
+    <footer>Hecho para celebrar a tus creadores favoritos · Los límites diarios de esta demo siguen la fecha local del dispositivo.</footer>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+      const CONFIG_KEY = "gala-votes-demo-config-v1";
+      const BALLOTS_KEY = "gala-votes-demo-ballots-v1";
+      const SOCIAL_KEY = "gala-votes-demo-social-v1";
+      const THEME_KEY = "gala-votes-demo-theme-v1";
+      const makeId = () => "id-" + Math.random().toString(36).slice(2, 10);
+      const starter = {
+        brand: "La Granja VIP",
+        eyebrow: "Segunda temporada · Votación del público",
+        title: "¡Vota en La Granja VIP Segunda Temporada por tu granjero favorito!",
+        description: "Apoya a tus favoritos en cada categoría. Puedes participar una vez al día o desbloquear cinco votos diarios siguiendo las páginas indicadas.",
+        logoTitle: "LA GRANJA VIP",
+        logoSubtitle: "SEGUNDA TEMPORADA",
+        categories: [
+          { id: "salvar", name: "Salvar a tu granjero", description: "Reparte tus cinco votos entre tus favoritos.", mode: "five", nominees: [ { id: "kevyn", name: 'Kevyn “Bicolor”' }, { id: "monica", name: "Mónica Escobedo" }, { id: "rafa", name: "Rafa Mercadante" } ] },
+          { id: "ganador", name: "Ganador de la temporada", description: "Elige a quien quieres ver ganar la temporada.", mode: "single", nominees: [ { id: "kevyn2", name: 'Kevyn “Bicolor”' }, { id: "monica2", name: "Mónica Escobedo" }, { id: "rafa2", name: "Rafa Mercadante" } ] }
+        ],
+        socials: []
+      };
+      const safeRead = (key, fallback) => {
+        try { const value = JSON.parse(localStorage.getItem(key)); return value ?? fallback; }
+        catch { return fallback; }
+      };
+      let config = safeRead(CONFIG_KEY, starter);
+      if (!config || !Array.isArray(config.categories) || !Array.isArray(config.socials)) config = structuredClone(starter);
+      let ballots = safeRead(BALLOTS_KEY, {});
+      let socialDone = safeRead(SOCIAL_KEY, {});
+      let activeCategory = config.categories[0]?.id || "";
+      let selectedSingle = "";
+      let selectedMulti = {};
+      let lastSubmitted = false;
+      const $ = (id) => document.getElementById(id);
+      const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+      const today = () => {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      };
+      const ballotKey = (categoryId) => `${categoryId}:${today()}`;
+      const category = () => config.categories.find((item) => item.id === activeCategory);
+      const existingBallot = (categoryId) => ballots[ballotKey(categoryId)];
+      const socialKey = (item) => item.id;
+      const socialsComplete = () => config.socials.every((item) => socialDone[socialKey(item)] === true);
+      const socialNetworkLabel = (network) => ({ Facebook: "Facebook", Instagram: "Instagram", TikTok: "TikTok" })[network] || "Red social";
+      const socialMark = (network) => ({ Facebook: "f", Instagram: "ig", TikTok: "♪" })[network] || "@";
+
+      function renderHeader() {
+        $("brandName").textContent = config.brand || "Gala de creadores";
+        $("heroEyebrow").textContent = config.eyebrow || "La gala del año";
+        $("eventTitle").textContent = config.title || "Vota por tus favoritos";
+        $("eventDescription").textContent = config.description || "Participa en la votación de la gala.";
+        $("logoTitle").textContent = config.logoTitle || config.brand || "LA GALA";
+        $("logoSubtitle").textContent = config.logoSubtitle || "VOTACIÓN DEL PÚBLICO";
+      }
+
+      function renderTabs() {
+        const tabs = $("categoryTabs");
+        tabs.innerHTML = config.categories.map((item) => `<button class="category-tab" type="button" role="tab" aria-selected="${item.id === activeCategory}" data-category="${escapeHtml(item.id)}">${escapeHtml(item.name)}</button>`).join("");
+        tabs.querySelectorAll("[data-category]").forEach((button) => button.addEventListener("click", () => {
+          activeCategory = button.dataset.category; selectedSingle = ""; selectedMulti = {}; lastSubmitted = false; renderPublic();
+        }));
+      }
+
+      function renderSocialGate() {
+        const complete = socialsComplete();
+        const completionMessage = config.socials.length === 0
+          ? `<div class="gate-locked">No hay páginas sociales configuradas; los cinco votos están desbloqueados en este momento.</div>`
+          : complete
+            ? `<div class="social-complete">✓ Requisitos completados en este navegador. Ya puedes votar con cinco votos.</div>`
+            : `<div class="gate-locked">🔒 Completa todas las confirmaciones para habilitar los cinco votos.</div>`;
+        const tasks = config.socials.map((item) => {
+          const checked = socialDone[socialKey(item)] === true;
+          const url = /^https:\/\//i.test(item.url || "") ? item.url : "";
+          return `<div class="social-task">
+            <span class="social-icon" aria-hidden="true">${escapeHtml(socialMark(item.network))}</span>
+            <span class="social-info"><strong>${escapeHtml(item.name || "Página social")}</strong><small>${escapeHtml(socialNetworkLabel(item.network))}</small></span>
+            ${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Abrir página ↗</a>` : `<span class="social-info"><small>El administrador aún no agregó un enlace.</small></span>`}
+            <label class="check-label"><input type="checkbox" data-social="${escapeHtml(item.id)}" ${checked ? "checked" : ""}> Ya lo hice</label>
+          </div>`;
+        }).join("");
+        return `<div class="social-gate"><h4>Desbloquea tus cinco votos diarios</h4><p>Sigue las páginas indicadas y confirma cada paso. Esta confirmación es manual en la versión demo.</p>${tasks}${completionMessage}</div>`;
+      }
+
+      function nomineeMarkup(item, mode, used, locked, totalVotes) {
+        const amount = selectedMulti[item.id] || 0;
+        const selected = selectedSingle === item.id;
+        const initials = escapeHtml((item.name || "?").trim().split(/\s+/).slice(0, 2).map((part) => part[0] || "").join("").toUpperCase());
+        const avatar = item.image && /^https:\/\//i.test(item.image)
+          ? `<img src="${escapeHtml(item.image)}" alt="" loading="lazy" onerror="this.style.display='none'"><span>${initials}</span>`
+          : initials;
+        return `<article class="nominee ${(mode === "single" && selected) || (mode === "five" && amount > 0) ? "selected" : ""}">
+          <span class="avatar" aria-hidden="true">${avatar}</span>
+          <span class="nominee-name">${escapeHtml(item.name)}<small>${mode === "single" ? "Nominado/a" : `${amount} ${amount === 1 ? "voto" : "votos"}`}</small></span>
+          ${mode === "single" ? `<input class="radio-control" type="radio" name="nominee" value="${escapeHtml(item.id)}" aria-label="Votar por ${escapeHtml(item.name)}" ${selected ? "checked" : ""} ${used ? "disabled" : ""}>` : `<span class="select-control"><button type="button" class="round-button secondary" data-minus="${escapeHtml(item.id)}" aria-label="Quitar un voto a ${escapeHtml(item.name)}" ${(locked || amount <= 0 || used) ? "disabled" : ""}>−</button><span class="vote-count" aria-label="${amount} votos">${amount}</span><button type="button" class="round-button" data-plus="${escapeHtml(item.id)}" aria-label="Añadir un voto a ${escapeHtml(item.name)}" ${(locked || used || totalVotes >= 5) ? "disabled" : ""}>+</button></span>`}
+        </article>`;
+      }
+
+      function renderVote() {
+        const item = category();
+        const target = $("voteContent");
+        if (!config.categories.length || !item) {
+          target.innerHTML = `<div class="empty-state"><strong>Aún no hay categorías.</strong><br>Abre “Configurar” para crear la primera.</div>`;
+          return;
+        }
+        const used = Boolean(existingBallot(item.id));
+        const multiTotal = Object.values(selectedMulti).reduce((sum, count) => sum + count, 0);
+        const socialLocked = item.mode === "five" && !socialsComplete();
+        const locked = socialLocked || used;
+        const mode = item.mode === "five" ? "five" : "single";
+        const nominees = item.nominees || [];
+        const receipt = existingBallot(item.id);
+        const success = lastSubmitted ? `<div class="success-banner" role="status">✓ ¡Tu voto fue registrado en este navegador! Gracias por participar.</div>` : "";
+        const usedNotice = used ? `<div class="success-banner">Ya registraste tu voto de hoy en esta categoría. Puedes volver mañana.</div>` : "";
+        const social = mode === "five" ? renderSocialGate() : "";
+        const controls = mode === "five" ? `<div class="progress-row"><span>Votos asignados</span><span>${multiTotal} de 5</span></div><div class="progress-track" role="progressbar" aria-valuenow="${multiTotal}" aria-valuemin="0" aria-valuemax="5"><div class="progress-fill" style="width:${Math.min(100, multiTotal * 20)}%"></div></div>` : "";
+        const count = mode === "five" ? "Hasta 5 votos diarios · puedes repartirlos" : "1 voto diario · elige a una persona";
+        target.innerHTML = `${success}${usedNotice}<section class="vote-panel">
+          <header class="vote-header"><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.description || "Elige a tu favorito para esta categoría.")}</p><span class="rule-chip">${mode === "five" ? "✦" : "✓"} ${count}</span></header>
+          <div class="vote-body">${social}${controls}<div class="nominees">${nominees.length ? nominees.map((nominee) => nomineeMarkup(nominee, mode, used, locked, multiTotal)).join("") : `<div class="empty-state">Añade nominados desde el panel “Configurar”.</div>`}</div></div>
+          <div class="vote-footer"><button class="primary-button" id="submitVote" type="button" ${used || nominees.length === 0 || (mode === "five" ? multiTotal !== 5 || socialLocked : !selectedSingle) ? "disabled" : ""}>ENVIAR ${mode === "five" ? "VOTOS" : "MI VOTO"}</button><p class="vote-hint">${used ? "El límite se reinicia mañana según la fecha de este dispositivo." : mode === "five" ? "Debes asignar exactamente los cinco votos antes de enviar." : "Tu elección queda cerrada hasta mañana en este navegador."}</p></div>
+        </section>`;
+        target.querySelectorAll("input[name=nominee]").forEach((radio) => radio.addEventListener("change", () => { selectedSingle = radio.value; renderVote(); }));
+        target.querySelectorAll("[data-plus]").forEach((button) => button.addEventListener("click", () => {
+          const total = Object.values(selectedMulti).reduce((sum, n) => sum + n, 0);
+          if (total < 5 && socialsComplete() && !used) selectedMulti[button.dataset.plus] = (selectedMulti[button.dataset.plus] || 0) + 1;
+          renderVote();
+        }));
+        target.querySelectorAll("[data-minus]").forEach((button) => button.addEventListener("click", () => {
+          const id = button.dataset.minus;
+          if (selectedMulti[id] > 0) selectedMulti[id]--;
+          if (!selectedMulti[id]) delete selectedMulti[id];
+          renderVote();
+        }));
+        target.querySelectorAll("[data-social]").forEach((checkbox) => checkbox.addEventListener("change", () => {
+          socialDone[checkbox.dataset.social] = checkbox.checked;
+          try { localStorage.setItem(SOCIAL_KEY, JSON.stringify(socialDone)); } catch { /* storage unavailable */ }
+          renderVote();
+        }));
+        $("submitVote")?.addEventListener("click", () => castVote(item));
+      }
+
+      function castVote(item) {
+        if (existingBallot(item.id)) return;
+        const mode = item.mode === "five" ? "five" : "single";
+        const votes = mode === "five" ? { ...selectedMulti } : selectedSingle ? { [selectedSingle]: 1 } : {};
+        const total = Object.values(votes).reduce((sum, count) => sum + count, 0);
+        if ((mode === "five" && (total !== 5 || !socialsComplete())) || (mode === "single" && total !== 1)) return;
+        ballots[ballotKey(item.id)] = { categoryId: item.id, votes, submittedAt: new Date().toISOString() };
+        try { localStorage.setItem(BALLOTS_KEY, JSON.stringify(ballots)); }
+        catch { delete ballots[ballotKey(item.id)]; alert("No se pudo guardar el voto. Revisa el almacenamiento del navegador."); return; }
+        lastSubmitted = true; renderPublic();
+      }
+
+      function renderPublic() { renderHeader(); renderTabs(); renderVote(); }
+      function renderAdmin() {
+        $("configBrand").value = config.brand || "";
+        $("configEyebrow").value = config.eyebrow || "";
+        $("configTitle").value = config.title || "";
+        $("configDescription").value = config.description || "";
+        $("configLogoTitle").value = config.logoTitle || "";
+        $("configLogoSubtitle").value = config.logoSubtitle || "";
+        $("categoryEditor").innerHTML = config.categories.map((item, index) => `<div class="admin-category" data-admin-category="${escapeHtml(item.id)}">
+          <div class="admin-category-head"><strong>Categoría ${index + 1}</strong><button type="button" class="text-button" data-remove-category="${escapeHtml(item.id)}">Eliminar categoría</button></div>
+          <div class="form-grid">
+            <div class="field"><label>Nombre de la categoría</label><input data-cat-name="${escapeHtml(item.id)}" maxlength="70" value="${escapeHtml(item.name)}" required></div>
+            <div class="field"><label>Regla de votación</label><select data-cat-mode="${escapeHtml(item.id)}"><option value="single" ${item.mode !== "five" ? "selected" : ""}>Un voto diario</option><option value="five" ${item.mode === "five" ? "selected" : ""}>Cinco votos diarios</option></select></div>
+            <div class="field full"><label>Descripción / instrucciones</label><input data-cat-description="${escapeHtml(item.id)}" maxlength="140" value="${escapeHtml(item.description || "")}"></div>
+            <div class="field full"><label>Nominados</label><textarea data-cat-nominees="${escapeHtml(item.id)}" placeholder="Un nominado por línea">${escapeHtml(item.nominees.map((nominee) => `${nominee.name}${nominee.image ? ` | ${nominee.image}` : ""}`).join("\n"))}</textarea><span class="help">Una persona por línea. Opcional: agrega <code> | https://.../foto.jpg</code> después del nombre para mostrar su imagen.</span></div>
+          </div>
+        </div>`).join("");
+        $("socialEditor").innerHTML = config.socials.length ? config.socials.map((item) => `<div class="admin-social-row" data-admin-social="${escapeHtml(item.id)}">
+          <div class="field"><label>Red social</label><select data-social-network="${escapeHtml(item.id)}"><option ${item.network === "Facebook" ? "selected" : ""}>Facebook</option><option ${item.network === "Instagram" ? "selected" : ""}>Instagram</option><option ${item.network === "TikTok" ? "selected" : ""}>TikTok</option></select></div>
+          <div class="field"><label>Nombre de la página</label><input data-social-name="${escapeHtml(item.id)}" maxlength="60" value="${escapeHtml(item.name)}" placeholder="Nombre del creador"></div>
+          <div class="field"><label>Enlace https://</label><input data-social-url="${escapeHtml(item.id)}" type="url" value="${escapeHtml(item.url || "")}" placeholder="https://..."></div>
+          <button type="button" class="text-button" data-remove-social="${escapeHtml(item.id)}">Quitar</button>
+        </div>`).join("") : `<div class="empty-state" style="padding:16px">No hay páginas requeridas. Añade las que deberán seguir para votar con cinco votos.</div>`;
+        $("categoryEditor").querySelectorAll("[data-remove-category]").forEach((button) => button.addEventListener("click", () => {
+          if (config.categories.length <= 1) { alert("Debe quedar al menos una categoría."); return; }
+          config = readAdminDraft();
+          config.categories = config.categories.filter((item) => item.id !== button.dataset.removeCategory);
+          if (activeCategory === button.dataset.removeCategory) activeCategory = config.categories[0].id;
+          renderAdmin();
+        }));
+        $("socialEditor").querySelectorAll("[data-remove-social]").forEach((button) => button.addEventListener("click", () => {
+          const id = button.dataset.removeSocial;
+          config = readAdminDraft();
+          config.socials = config.socials.filter((item) => item.id !== id);
+          delete socialDone[id];
+          renderAdmin();
+        }));
+        renderStats();
+      }
+
+      function renderStats() {
+        const dailyBallots = Object.keys(ballots).filter((key) => key.endsWith(`:${today()}`)).length;
+        const totalStored = Object.keys(ballots).length;
+        const socialCount = Object.values(socialDone).filter(Boolean).length;
+        $("adminStats").innerHTML = `<div class="stat-card"><strong>${dailyBallots}</strong><span>votos/categorías de hoy en este navegador</span></div><div class="stat-card"><strong>${totalStored}</strong><span>participaciones guardadas en total</span></div><div class="stat-card"><strong>${socialCount} / ${config.socials.length}</strong><span>confirmaciones sociales guardadas</span></div>`;
+        $("adminResults").innerHTML = config.categories.map((item) => {
+          const totals = Object.fromEntries(item.nominees.map((nominee) => [nominee.id, 0]));
+          Object.values(ballots).forEach((ballot) => {
+            if (ballot.categoryId !== item.id) return;
+            Object.entries(ballot.votes || {}).forEach(([nomineeId, count]) => {
+              if (Object.hasOwn(totals, nomineeId)) totals[nomineeId] += Number(count) || 0;
+            });
+          });
+          return `<div class="result-category"><strong>${escapeHtml(item.name)}</strong>${item.nominees.length ? item.nominees.map((nominee) => `<div class="result-line"><span>${escapeHtml(nominee.name)}</span><b>${totals[nominee.id] || 0}</b></div>`).join("") : `<span class="help">Sin nominados</span>`}</div>`;
+        }).join("") || `<div class="empty-state" style="padding:16px">Aún no hay categorías.</div>`;
+      }
+
+      function readAdminDraft() {
+        const next = {
+          ...config,
+          brand: $("configBrand").value.trim(), eyebrow: $("configEyebrow").value.trim(),
+          title: $("configTitle").value.trim(), description: $("configDescription").value.trim(),
+          logoTitle: $("configLogoTitle").value.trim(), logoSubtitle: $("configLogoSubtitle").value.trim()
+        };
+        next.categories = config.categories.map((item) => {
+          const entries = $("adminForm").querySelector(`[data-cat-nominees="${CSS.escape(item.id)}"]`).value.split("\n").map((line) => {
+            const separator = line.indexOf("|");
+            return { name: (separator < 0 ? line : line.slice(0, separator)).trim(), image: separator < 0 ? "" : line.slice(separator + 1).trim() };
+          }).filter((entry) => entry.name);
+          const oldByName = new Map(item.nominees.map((nominee) => [nominee.name.toLocaleLowerCase(), nominee]));
+          return {
+            ...item,
+            name: $("adminForm").querySelector(`[data-cat-name="${CSS.escape(item.id)}"]`).value.trim(),
+            mode: $("adminForm").querySelector(`[data-cat-mode="${CSS.escape(item.id)}"]`).value,
+            description: $("adminForm").querySelector(`[data-cat-description="${CSS.escape(item.id)}"]`).value.trim(),
+            nominees: entries.map(({ name, image }) => {
+              const previous = oldByName.get(name.toLocaleLowerCase());
+              const nominee = previous ? { ...previous, name } : { id: makeId(), name };
+              const imageUrl = /^https:\/\//i.test(image) ? image : previous?.image;
+              if (imageUrl) nominee.image = imageUrl;
+              else delete nominee.image;
+              return nominee;
+            })
+          };
+        });
+        next.socials = config.socials.map((item) => ({
+          ...item,
+          network: $("adminForm").querySelector(`[data-social-network="${CSS.escape(item.id)}"]`).value,
+          name: $("adminForm").querySelector(`[data-social-name="${CSS.escape(item.id)}"]`).value.trim(),
+          url: $("adminForm").querySelector(`[data-social-url="${CSS.escape(item.id)}"]`).value.trim()
+        }));
+        return next;
+      }
+
+      function saveAdmin(event) {
+        event.preventDefault();
+        const next = readAdminDraft();
+        next.socials = next.socials.filter((item) => item.name);
+        if (next.categories.some((item) => !item.name)) { alert("Escribe un nombre para cada categoría."); return; }
+        for (const social of next.socials) {
+          const previous = config.socials.find((item) => item.id === social.id);
+          if (!previous || previous.network !== social.network || previous.name !== social.name || previous.url !== social.url) delete socialDone[social.id];
+        }
+        config = next;
+        try { localStorage.setItem(CONFIG_KEY, JSON.stringify(config)); }
+        catch { alert("No se pudo guardar. El almacenamiento del navegador puede estar lleno o bloqueado."); return; }
+        try { localStorage.setItem(SOCIAL_KEY, JSON.stringify(socialDone)); } catch { /* optional confirmation state */ }
+        if (!config.categories.some((item) => item.id === activeCategory)) activeCategory = config.categories[0]?.id || "";
+        $("saveStatus").textContent = "Guardado en este navegador.";
+        lastSubmitted = false; renderAdmin(); renderPublic();
+        window.setTimeout(() => { $("saveStatus").textContent = ""; }, 3000);
+      }
+
+      function setTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        $("themeToggle").textContent = theme === "dark" ? "☀" : "☾";
+        $("themeToggle").setAttribute("aria-label", theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+        try { localStorage.setItem(THEME_KEY, theme); } catch { /* optional preference */ }
+      }
+      const storedTheme = (() => { try { return localStorage.getItem(THEME_KEY) || ""; } catch { return ""; } })();
+      setTheme(storedTheme === "dark" || storedTheme === "light" ? storedTheme : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+      $("themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+      $("adminToggle").addEventListener("click", () => {
+        const showAdmin = $("adminView").hidden;
+        $("adminView").hidden = !showAdmin;
+        $("publicView").hidden = showAdmin;
+        $("adminToggle").setAttribute("aria-expanded", String(showAdmin));
+        $("adminToggle").classList.toggle("active", showAdmin);
+        $("adminToggle").textContent = showAdmin ? "← Volver a votar" : "⚙ Configurar";
+        if (showAdmin) renderAdmin();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      $("adminForm").addEventListener("submit", saveAdmin);
+      $("addCategory").addEventListener("click", () => {
+        config = readAdminDraft();
+        const added = { id: makeId(), name: "Nueva categoría", description: "Elige a tu favorito.", mode: "single", nominees: [] };
+        config.categories.push(added); activeCategory = added.id; renderAdmin();
+      });
+      $("addSocial").addEventListener("click", () => {
+        config = readAdminDraft();
+        config.socials.push({ id: makeId(), network: "Instagram", name: "", url: "" }); renderAdmin();
+      });
+      renderPublic();
+    })();
+  </script>
+</body>
+</html>
