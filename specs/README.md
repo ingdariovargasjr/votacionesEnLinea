@@ -26,9 +26,9 @@ Crear una plataforma para administrar varias galas y publicar sus votaciones com
 ## Arquitectura objetivo
 
 - **Frontend:** Vue 3 + TypeScript + Vite. Rutas separadas para administración/preview y para el widget público (`/embed/:publicId`).
-- **Hosting:** Firebase Hosting para Vue; Render para la API Node.js/TypeScript, con recursos separados por ambiente.
+- **Hosting:** Firebase Hosting para Vue; Cloudflare Workers para la API Node.js/TypeScript, con Workers y secretos separados por ambiente.
 - **API:** REST versionada, por ejemplo `/api/v1`. La API valida publicación, identidad, reglas, permisos y cuotas; el cliente no decide si un voto es válido.
-- **Persistencia:** Supabase Postgres. Supabase Auth para administradores y el mecanismo de identidad de participantes que se decida. La clave `service_role` vive solo como secreto del API en Render; nunca en Vue ni en el iframe.
+- **Persistencia:** Supabase Postgres. Supabase Auth para administradores y el mecanismo de identidad de participantes que se decida. La clave `service_role` vive solo como secreto del API en Cloudflare Workers; nunca en Vue ni en el iframe.
 - **Embeds:** el iframe consume únicamente endpoints públicos de lectura y voto. Restringir `frame-ancestors` a los dominios autorizados por evento cuando se conozcan. Configurar CORS, límites de solicitudes y validación de `Origin`; CORS por sí solo no protege el API.
 - **Estado:** los votos, límites diarios y confirmaciones manuales se almacenan en servidor. El participante anónimo recibe un identificador firmado y persistido en el navegador para la experiencia usual; no se presenta como identidad humana fuerte. El API valida la firma, pero el usuario puede evadir el límite borrando/cambiando su identidad local.
 
@@ -47,7 +47,7 @@ Si una plataforma no ofrece una señal autorizada, se utiliza la confirmación m
 ## Seguridad y privacidad mínimas
 
 - Verificar sesión de administrador y permisos en cada operación de administración.
-- Mantener secretos y claves privilegiadas solo en Render; políticas RLS como defensa adicional en Supabase.
+- Mantener secretos y claves privilegiadas solo en el runtime privado de la API; políticas RLS como defensa adicional en Supabase.
 - Aplicar límites y unicidad en servidor/transacciones, guardar zona horaria y fecha de voto, y registrar cambios/publicaciones.
 - No guardar contraseña ni token de acceso a redes sociales salvo que una integración oficial lo exija, esté aprobada y se documente el alcance. Preferir el mínimo dato necesario.
 - Definir aviso de privacidad, retención/borrado de datos, edad mínima y jurisdicción antes del lanzamiento.

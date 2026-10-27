@@ -5,9 +5,9 @@ Proyecto en desarrollo siguiendo las especificaciones de [`specs/`](./specs/). E
 ## Stack
 
 - Vue 3 + TypeScript + Vite para administración y, en siguientes historias, el widget iframe.
-- API REST Node.js + TypeScript + Express desplegable como servicio web de Render.
+- API REST Node.js + TypeScript + Express compatible con Cloudflare Workers.
 - Supabase Auth para cuentas y Supabase Postgres para datos/planes.
-- Firebase Hosting para Vue y dos servicios API en Render; `render.yaml` contiene el blueprint de testing y producción.
+- Firebase Hosting para Vue con sitios separados de testing y producción; Cloudflare Workers ejecuta la API por entorno.
 
 ## Historia implementada
 
@@ -43,35 +43,35 @@ Las contraseñas las administra Supabase Auth y nunca se guardan en `profiles`; 
 
 ## Entornos en la nube
 
-La historia **OPS-02** prepara Firebase Hosting, Render y Supabase para mantener `testing` separado de `producción`. Las ramas persistentes `testing` y `producción` ya se crearon desde el mismo commit inicial de `main`; el código de la plataforma se publicó primero en `testing`. Todo cambio futuro se prueba ahí y se promueve a `producción` mediante un pull request revisado. Firebase CLI (`firebase-tools`) está instalado como dependencia de desarrollo. El proyecto Firebase `respeto-6e276` tiene dos sitios: `votaciones-en-linea-testing` y `votaciones-en-linea`; `.firebaserc` los asigna a los targets `testing` y `production`. Render mantiene una API separada en cada entorno, con despliegue manual.
+La historia **OPS-02** mantiene `testing` separado de `producción`. Las ramas persistentes `testing` y `producción` ya se crearon desde el mismo commit inicial de `main`; el código se valida primero en `testing` y se promueve por PR revisado. Firebase usa el proyecto `respeto-6e276` con dos sitios, `votaciones-en-linea-testing` y `votaciones-en-linea`, asignados en `.firebaserc`. La API de testing se ejecuta como Cloudflare Worker independiente (`votaciones-api-testing`); producción no se migra ni despliega hasta aprobarla por separado.
 
 ### Preparación de cuentas (una vez)
 
 1. Crea **dos proyectos Supabase** (testing y producción), cada uno con Auth, base de datos y Storage independientes. Firebase ya está creado: el proyecto `respeto-6e276` aloja el sitio testing `votaciones-en-linea-testing` y el sitio producción `votaciones-en-linea`. Testing usa datos sintéticos; no copies votos ni datos personales reales.
-2. Las ramas `testing` y `producción` y los GitHub Environments ya están configurados. El Blueprint es opcional; puedes crear manualmente el Web Service en el entorno Render **Testing**, desde el repo `ingdariovargasjr/votacionesEnLinea`, rama `testing`, y elegir el plan **Free** para probar. Usa `npm ci && npm run build --workspace @gala/api`, `npm run start --workspace @gala/api` y health check `/health`. El plan Free duerme tras 15 minutos sin tráfico, así que no es adecuado para producción/eventos en vivo. Para producción, crea el Web Service en el entorno **Production**, rama `producción`, solo después de aprobar el cambio y confirmar el plan/precio; no autorices cargos inesperados. Desactiva el deploy automático y asigna a cada servicio sus propios `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPERUSER_EMAIL`, `CORS_ORIGINS` y `PUBLIC_WEB_URL` (y `ADMIN_USER_IDS` solo si se necesita compatibilidad antigua). Los dominios son `https://votaciones-en-linea-testing.web.app` y `https://votaciones-en-linea.web.app`. Nunca compartas `service_role`. `render.yaml` queda como plantilla IaC opcional; usar servicios manuales no evita el costo de un plan si Render lo requiere.
+2. La configuración de Cloudflare Workers está en `wrangler.jsonc` y solo define el Worker de testing. Completa `wrangler login`, configura los secretos de Supabase de testing con `wrangler secret put <NOMBRE> --config wrangler.jsonc` y despliega con `npm run deploy:workers:testing --workspace @gala/api`. `SUPABASE_SERVICE_ROLE_KEY` nunca se incluye en el frontend ni en Git. El Worker debe responder `https://<nombre-del-worker>/health`; `PUBLIC_WEB_URL` y `CORS_ORIGINS` ya se fijan al sitio Firebase de testing. No hay configuración ni despliegue de Worker de producción en este cambio.
 3. La protección de ramas ya está aplicada: `testing` requiere PR y CI; `producción` requiere PR, CI verde y actualizado, al menos una aprobación vigente y bloquea pushes directos, force-pushes y borrado. Los GitHub Environments están limitados a las ramas correspondientes. Mantén `main` como base; no despliegues producción desde `main`.
 4. En **cada GitHub Environment** establece las variables:
    - `SUPABASE_PROJECT_REF`: referencia del proyecto Supabase correspondiente.
-   - `VITE_API_URL`: URL HTTPS del servicio API Render del mismo entorno, sin barra final.
+   - `VITE_API_URL`: URL HTTPS del Worker API del mismo entorno, sin barra final.
    - `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`: URL y anon/publishable key pública del Supabase de ese entorno.
-5. En cada Environment establece los secretos `SUPABASE_ACCESS_TOKEN` (PAT de Supabase con acceso al proyecto correspondiente), `SUPABASE_DB_PASSWORD` (solo la contraseña DB de ese entorno) y `FIREBASE_SERVICE_ACCOUNT_JSON` (JSON de cuenta de servicio con privilegio mínimo para desplegar Hosting en `respeto-6e276`; el mismo service account puede usarse en ambos Environments). Nunca pongas credenciales en archivos `.env`, `VITE_*`, el repo o el chat.
+5. En cada GitHub Environment establece `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD` y `FIREBASE_SERVICE_ACCOUNT_JSON` para los workflows de migración/despliegue. En Cloudflare configura también los secretos de la API del entorno (`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` y, si aplica, `SUPERUSER_EMAIL`/`ADMIN_USER_IDS`). Nunca pongas credenciales en archivos versionados, variables `VITE_*`, el repo o el chat.
 6. En cada Supabase → **Authentication → URL Configuration**, fija el sitio Firebase de su entorno como Site URL y allowlist de redirects: el host testing para Supabase testing y el host producción para Supabase producción. Configura SMTP y confirma correo antes de crear la cuenta superusuario. Revisa también los dominios/orígenes iframe autorizados; esos se administran por gala y no son lo mismo que CORS.
 
 ### Ciclo de publicación
 
 1. Todo trabajo funcional se incorpora primero a `testing` (directamente o mediante PR); CI ejecuta `npm test` y compila API/web. Completa allí las pruebas manuales.
 2. Ejecuta **Actions → Apply Supabase migrations** en la rama `testing`, entorno `testing`. Inspecciona el `--dry-run` y aplica migraciones al Supabase de pruebas.
-3. En Render, despliega manualmente `gala-voting-api-testing` dentro de Testing. Espera que `/health` responda `200` antes de desplegar el frontend.
+3. Despliega manualmente el Worker `votaciones-api-testing`. Espera que `/health` responda `200` antes de desplegar el frontend.
 4. Ejecuta **Actions → Deploy Firebase Hosting** desde `testing`, entorno `testing`. El workflow verifica la API, compila con las variables de testing y publica solo el target `hosting:testing` (`votaciones-en-linea-testing`). Después prueba Auth, votos, Storage, iframes y reportes usando datos sintéticos.
-5. Cuando todo esté aprobado en testing, abre un pull request **desde `testing` hacia `producción`**. El PR debe incluir los últimos cambios probados, estar actualizado con la rama destino, pasar CI y conservar una aprobación vigente; no hagas cambios funcionales directamente en `producción`. Una vez fusionado, aplica las migraciones con el workflow seleccionado como `production` y revisa el plan. Después, despliega manualmente `gala-voting-api-production` dentro de Production; confirma su `/health` y solo entonces ejecuta **Deploy Firebase Hosting** desde `producción`, entorno `production`. Ese workflow publica únicamente `hosting:production` (`votaciones-en-linea`).
+5. Cuando todo esté aprobado en testing, abre un pull request **desde `testing` hacia `producción`**. El PR debe incluir los últimos cambios probados, estar actualizado con la rama destino, pasar CI y conservar una aprobación vigente. Después configura un Worker de producción independiente con sus propios secretos, migra/provisiona la base de datos de producción y publica Firebase solo tras comprobar la API.
 
-Los workflows están bajo `.github/workflows/`. Las ramas de despliegue se crean inicialmente desde `main`; luego testing se promueve a producción exclusivamente mediante PR aprobado. Los workflows rechazan despliegues desde una rama incorrecta. Firebase se publica manualmente para que el frontend no salga antes de que API y migraciones estén listas. Para reversión, redepliega en Render/Firebase un commit previamente validado; las migraciones deben ser aditivas y compatibles hacia atrás. No reviertas votos o datos con un rollback de código.
+Los workflows están bajo `.github/workflows/`. Las ramas de despliegue se crean inicialmente desde `main`; luego testing se promueve a producción exclusivamente mediante PR aprobado. El workflow de Firebase rechaza despliegues desde una rama incorrecta. Firebase se publica manualmente para que el frontend no salga antes de que API y migraciones estén listas. Para reversión del Worker, usa versiones anteriores de Cloudflare; las migraciones deben ser aditivas y compatibles hacia atrás. No reviertas votos o datos con un rollback de código.
 
 ### Despliegue manual de Firebase desde una máquina autorizada
 
 Con los targets del archivo `.firebaserc`, un despliegue manual autorizado se hace con `npm run firebase -- deploy --only hosting:testing --project respeto-6e276` o `npm run firebase -- deploy --only hosting:production --project respeto-6e276`. Prefiere los workflows protegidos de GitHub y no guardes credenciales de servicio localmente.
 
-**Estado:** el repositorio GitHub es público; las ramas, protecciones y GitHub Environments están configurados, y CI pasó en `testing`. Firebase está mapeado a sus dos sitios en un mismo proyecto. `producción` sigue en el commit base hasta completar pruebas y aprobar el PR. Para quedar en línea faltan los dos proyectos Supabase, cargar sus valores privados y crear/configurar manualmente los Web Services de Render. No se ejecutaron migraciones ni despliegues remotos.
+**Estado:** ramas, protecciones y GitHub Environments están configurados; Firebase tiene sus dos sitios mapeados. La API ya tiene un target Cloudflare Workers de testing y pasó build/dry-run local. Para publicar faltan autenticar Wrangler, crear/configurar el proyecto Supabase de testing y configurar sus secretos; las variables/secreto del GitHub Environment `testing` también están vacíos. No se han desplegado Worker ni frontend, ni se ejecutaron migraciones. `producción` no se modificó.
 
 ### Integrar el widget
 

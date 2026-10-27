@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local Wrangler development. Never commit real credentials.
+SUPABASE_URL=https://your-testing-project.supabase.co
+SUPABASE_ANON_KEY=your-testing-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-testing-service-role-key
+SUPERUSER_EMAIL=admin@example.com
