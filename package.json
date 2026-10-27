@@ -17,5 +17,8 @@
   "devDependencies": {
     "concurrently": "^9.2.1",
     "firebase-tools": "^15.34.1"
+  },
+  "allowScripts": {
+    "workerd@1.20261023.1": true
   }
 }
