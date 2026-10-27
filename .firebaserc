@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "respeto-6e276"
+  },
+  "targets": {
+    "respeto-6e276": {
+      "hosting": {
+        "testing": ["votaciones-en-linea-testing"],
+        "production": ["votaciones-en-linea"]
+      }
+    }
+  }
+}
