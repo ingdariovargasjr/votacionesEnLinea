@@ -23,13 +23,13 @@
 
 ### Configuración preparada / pendiente de cuentas
 
-Preparados Firebase Hosting, workflows de CI, migración Supabase manual por ambiente y blueprint Render con dos APIs. El despliegue real queda pendiente de vincular este directorio a un repositorio GitHub, crear `testing` y `producción` desde `main`, crear/configurar los dos proyectos Firebase y Supabase, publicar los servicios Render y cargar valores en GitHub Environments; los IDs y credenciales no están disponibles en el repositorio. El Supabase actualmente vinculado no se reasigna automáticamente a testing ni a producción.
+Las ramas `testing` y `producción` ya se crearon desde el commit inicial de `main`; el código se subió primero a `testing` en el commit `44c6fa9` y CI pasó. Solo los workflows manuales de despliegue también están en `main` para que GitHub los pueda despachar. `producción` se mantiene en el commit base hasta completar pruebas y aprobar el PR. Falta crear/configurar los proyectos Firebase/Supabase, conectar el Blueprint y configurar valores en GitHub/Render. El Supabase actualmente vinculado no se reasigna automáticamente. El repo es privado y el plan GitHub actual no permite activar protecciones de rama; hace falta Pro/Team para exigir approvals y checks.
 
 ### Checklist de cuentas
 
 1. Crear proyectos Supabase separados y configurar Auth/SMTP, Storage y dominios permitidos en ambos.
 2. Crear dos proyectos Firebase y habilitar Hosting. Configurar los dominios Hosting/custom domains como URLs de retorno permitidas en el Supabase correspondiente.
-3. Desde el commit actual de `main`, crear `testing` y `producción`. Conectar `render.yaml` como Blueprint al proyecto `votacionesEnLinea`; verifica que `gala-voting-api-testing` quede en el entorno Render `Testing` y `gala-voting-api-production` en `Production`. Asigna a cada servicio sus propias URL/anon key/service role, correo superusuario, URL del frontend y CORS. El deploy automático queda desactivado para permitir migrar la base primero.
+3. Las ramas ya están creadas desde el mismo commit base. Conectar `render.yaml` desde la rama `testing` como Blueprint al proyecto `votacionesEnLinea`; verifica que `gala-voting-api-testing` quede en el entorno Render `Testing` y `gala-voting-api-production` en `Production`. Asigna a cada servicio sus propias URL/anon key/service role, correo superusuario, URL del frontend y CORS. El deploy automático queda desactivado para permitir migrar la base primero.
 4. Crear GitHub Environments `testing` y `production`; exigir revisores para `production`. Proteger `testing` y `producción`; en `producción`, requerir pull request, CI exitoso, rama actualizada con su base, descartar aprobaciones obsoletas y bloquear pushes/force-push directos.
 5. Cargar en cada Environment las variables/secretos enumerados en README; nunca reutilizar service-role keys ni contraseñas entre entornos.
 6. Integrar cambios solo primero en `testing`, ejecutar migraciones y smoke tests allí; después abrir el PR `testing` → `producción` y desplegar producción únicamente cuando tenga aprobación vigente y CI verde.
