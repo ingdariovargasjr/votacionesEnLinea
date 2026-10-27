@@ -7,7 +7,7 @@ El orden combina valor de producto y riesgo técnico. Los ítems P0 deben resolv
 | P0 | SPIKE-01 | Probar qué señales de follow/like ofrecen oficialmente Facebook, Instagram y TikTok; decidir alternativa para las que no se puedan verificar. | Cerrado para MVP: confirmación manual no verificada |
 | P0 | SPIKE-02 | Elegir identidad de participante persistente entre iframes/sitios y probar cookies/Storage Access en navegadores objetivo. | Decidido: solo navegador; validar particionado antes de publicar |
 | P1 | AUTH-01 | Registro/login recuperable, perfiles persistentes, superusuario gratuito y bloqueo de galas para cuentas sin pago activo. | Código listo; pendiente migración/correo |
-| P1 | OPS-02 | Separar testing y producción con ramas `testing`/`producción` desde `main`, Firebase Hosting, Render, Supabase, CI y promoción aprobada. | Ramas creadas; código y CI en testing; pendientes proyectos cloud, Render Blueprint y protección GitHub Pro/Team |
+| P1 | OPS-02 | Separar testing y producción con ramas `testing`/`producción` desde `main`, Firebase Hosting, Render, Supabase, CI y promoción aprobada. | Ramas y protecciones GitHub activas; CI pasa en testing; pendientes proyectos cloud y Render Blueprint |
 | P1 | ADM-01 | Crear y editar una gala y sus votaciones/ternas como borradores. | Validada con Supabase |
 | P1 | ADM-02 | Configurar nominados, regla de voto, zona horaria y programa social asociado a una votación. | Implementada y migración aplicada; validar flujo autenticado |
 | P1 | THEME-01 | Personalizar colores de botones y tipografía por gala, con vista previa. | Implementada; migración aplicada |

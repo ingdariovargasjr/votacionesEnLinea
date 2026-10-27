@@ -23,7 +23,7 @@
 
 ### Configuración preparada / pendiente de cuentas
 
-Las ramas `testing` y `producción` ya se crearon desde el commit inicial de `main`; el código se subió primero a `testing` en el commit `44c6fa9` y CI pasó. Solo los workflows manuales de despliegue también están en `main` para que GitHub los pueda despachar. `producción` se mantiene en el commit base hasta completar pruebas y aprobar el PR. Falta crear/configurar los proyectos Firebase/Supabase, conectar el Blueprint y configurar valores en GitHub/Render. El Supabase actualmente vinculado no se reasigna automáticamente. El repo es privado y el plan GitHub actual no permite activar protecciones de rama; hace falta Pro/Team para exigir approvals y checks.
+Las ramas `testing` y `producción` ya se crearon desde el commit inicial de `main`; el código se subió primero a `testing` y CI pasó. Solo los workflows manuales de despliegue también están en `main` para que GitHub los pueda despachar. Las reglas de rama están activas: `testing` requiere PR y CI; `producción` requiere PR, CI actualizado, una aprobación vigente, resolución de conversaciones y bloquea push directo, force-push y borrado. Los GitHub Environments se crearon y se restringieron a su rama. `producción` se mantiene en el commit base hasta completar pruebas y aprobar el PR. Falta crear/configurar los proyectos Firebase/Supabase, conectar el Blueprint y configurar valores en GitHub/Render. El Supabase actualmente vinculado no se reasigna automáticamente.
 
 ### Checklist de cuentas
 

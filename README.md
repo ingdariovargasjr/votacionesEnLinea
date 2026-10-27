@@ -49,7 +49,7 @@ La historia **OPS-02** prepara Firebase Hosting, Render y Supabase para mantener
 
 1. Crea **dos proyectos Supabase** (testing y producción) y **dos proyectos Firebase**. Mantén separados Auth, base de datos, Storage, usuarios, llaves y datos. Testing solo debe usar datos sintéticos; no copies votos o datos personales reales.
 2. Las ramas `testing` y `producción` ya existen desde el commit inicial de `main`. Conecta el repositorio a Render como Blueprint seleccionando la rama `testing` y el archivo `render.yaml`. Cada servicio queda asociado solo a su rama y con deploy automático desactivado. Configura cada servicio con sus propios `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPERUSER_EMAIL`, `CORS_ORIGINS` y `PUBLIC_WEB_URL` (y `ADMIN_USER_IDS` solo si se necesita compatibilidad antigua). `CORS_ORIGINS` y `PUBLIC_WEB_URL` deben tener el dominio Firebase de ese mismo entorno; nunca compartas `service_role`.
-3. En GitHub → **Settings → Environments**, crea `testing` y `production`. Añade revisores requeridos a `production`. Protege `testing` con CI requerido. Protege `producción` para exigir PR, CI verde, que la rama esté actualizada, aprobación vigente y para bloquear pushes directos y force-pushes. Mantén `main` como base; no despliegues producción desde `main`.
+3. Los GitHub Environments `testing` y `production` ya están creados y limitados a sus ramas correspondientes. Añade sus variables y secretos. La protección de ramas ya está aplicada: `testing` requiere PR y CI; `producción` requiere PR, CI verde y actualizado, al menos una aprobación vigente y bloquea pushes directos, force-pushes y borrado. Mantén `main` como base; no despliegues producción desde `main`.
 4. En **cada GitHub Environment** establece las variables:
    - `FIREBASE_PROJECT_ID`: ID del proyecto Firebase de ese entorno.
    - `SUPABASE_PROJECT_REF`: referencia del proyecto Supabase correspondiente.
@@ -72,7 +72,7 @@ Los workflows están bajo `.github/workflows/`. Las ramas de despliegue se crean
 
 Después de crear el proyecto y completar el build con las variables correctas de ese entorno, el CLI puede autenticarse con `npm run firebase -- login` y publicar con `npm run firebase -- deploy --only hosting --project <FIREBASE_PROJECT_ID>`. Prefiere el workflow protegido de GitHub para desplegar, y no guardes credenciales de servicio localmente.
 
-**Estado:** el repositorio GitHub está conectado, las dos ramas se crearon desde el mismo commit base y el código inicial está en `testing` (CI pasó). `producción` sigue en el commit base hasta completar pruebas y aprobar el PR. Para quedar en línea faltan los IDs de Firebase/Supabase, conectar el Blueprint a Render, cargar valores privados y configurar protecciones de rama. Este repositorio es privado y GitHub rechaza branch protection/rulesets en el plan actual; se requiere GitHub Pro/Team para imponer revisiones y checks. No se ejecutaron migraciones ni despliegues remotos.
+**Estado:** el repositorio GitHub ahora es público; las dos ramas se crearon desde el mismo commit base y el código inicial está en `testing` (CI pasó). Las protecciones de ramas y los GitHub Environments con restricción por rama están aplicados. `producción` sigue en el commit base hasta completar pruebas y aprobar el PR. Para quedar en línea faltan los IDs de Firebase/Supabase, conectar el Blueprint a Render y cargar valores privados. No se ejecutaron migraciones ni despliegues remotos.
 
 ### Integrar el widget
 
