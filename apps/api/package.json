@@ -8,7 +8,7 @@
     "deploy:workers:testing": "wrangler deploy --config ../../wrangler.jsonc",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
-    "test": "tsx --test src/schemas/events.test.ts src/schemas/themes.test.ts src/schemas/embed-origins.test.ts src/schemas/votes.test.ts src/schemas/social-confirmations.test.ts src/lib/image-validation.test.ts src/lib/embed-token.test.ts src/lib/participant-token.test.ts src/middleware/account-auth.test.ts",
+    "test": "tsx --test src/schemas/events.test.ts src/schemas/votings.test.ts src/schemas/themes.test.ts src/schemas/embed-origins.test.ts src/schemas/votes.test.ts src/schemas/social-confirmations.test.ts src/lib/image-validation.test.ts src/lib/embed-token.test.ts src/lib/participant-token.test.ts src/middleware/account-auth.test.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
