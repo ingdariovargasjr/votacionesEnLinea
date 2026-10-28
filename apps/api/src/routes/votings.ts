@@ -2,29 +2,10 @@ import { Router, type Response } from "express";
 import { z } from "zod";
 import { hasSupabaseConfig } from "../config.js";
 import { requireAccount, requirePaidPlan } from "../middleware/account-auth.js";
+import { createBallotSchema, updateBallotSchema } from "../schemas/votings.js";
 import { databaseClient } from "../supabase.js";
 
 export const votingsRouter = Router();
-
-const ballotFields = {
-  title: z.string().trim().min(2).max(120),
-  description: z.string().trim().max(500).default(""),
-  votingMode: z.enum(["single_daily", "five_daily"]),
-  socialProgramId: z.uuid().nullable().default(null),
-};
-const createBallotSchema = z.object(ballotFields).strict();
-const updateBallotSchema = z.object({
-  ...ballotFields,
-  nominees: z.array(z.object({
-    id: z.uuid().optional(),
-    name: z.string().trim().min(2).max(100),
-    eventFighterId: z.uuid().nullable().optional(),
-  }).strict()).max(100)
-    .superRefine((nominees, ctx) => {
-      const ids = nominees.flatMap((nominee) => nominee.id ? [nominee.id] : []);
-      if (new Set(ids).size !== ids.length) ctx.addIssue({ code: "custom", message: "No repitas el identificador de un nominado." });
-    }),
-}).strict();
 
 type ApiAccount = NonNullable<Express.Request["account"]>;
 
