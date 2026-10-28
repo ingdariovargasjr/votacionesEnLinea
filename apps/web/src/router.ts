@@ -9,6 +9,7 @@ import PasswordRecoveryView from "./views/PasswordRecoveryView.vue";
 import AccountSecurityView from "./views/AccountSecurityView.vue";
 import EventResultsView from "./views/EventResultsView.vue";
 import PublicVotingView from "./views/PublicVotingView.vue";
+import TestingView from "./views/TestingView.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -22,6 +23,7 @@ export const router = createRouter({
     { path: "/admin/events/:id", component: EventFormView, meta: { requiresAuth: true } },
     { path: "/admin/events/:id/votings", component: EventBallotsView, meta: { requiresAuth: true } },
     { path: "/admin/events/:id/results", component: EventResultsView, meta: { requiresAuth: true } },
+    { path: "/testing", component: TestingView, meta: { requiresAuth: true } },
     { path: "/admin/preview/:publicId", component: PublicVotingView, meta: { requiresAuth: true, widget: true, adminPreview: true } },
     { path: "/widget/:publicId", component: PublicVotingView, meta: { widget: true } },
   ],

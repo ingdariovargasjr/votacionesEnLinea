@@ -43,7 +43,7 @@ async function signOut() {
   <div class="app-shell" :class="{ 'widget-app-shell': route.meta.widget }">
     <header v-if="!route.meta.widget" class="topbar">
       <RouterLink class="brand" to="/admin/events"><span class="brand-mark">✦</span><span>Gala Studio<small>Administración de votaciones</small></span></RouterLink>
-      <div v-if="signedIn && supabaseConfigured && !demoSession" class="account-actions"><RouterLink class="account-link" to="/account/security">Seguridad</RouterLink><button class="button button-quiet" type="button" @click="signOut">Cerrar sesión</button></div>
+      <div v-if="signedIn && supabaseConfigured && !demoSession" class="account-actions"><RouterLink class="account-link" to="/testing">Probar iframes</RouterLink><RouterLink class="account-link" to="/account/security">Seguridad</RouterLink><button class="button button-quiet" type="button" @click="signOut">Cerrar sesión</button></div>
       <button v-else-if="signedIn && demoSession" class="button button-quiet" type="button" @click="signOut">Salir de demo</button>
     </header>
     <div v-if="demoSession && !route.meta.widget" class="demo-banner"><strong>Modo demostración.</strong> Los cambios son temporales y se pierden al recargar; Supabase/API no están conectados para esta vista.</div>
