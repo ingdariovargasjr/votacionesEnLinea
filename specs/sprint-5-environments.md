@@ -23,7 +23,7 @@
 
 ### Configuración preparada / pendiente de cuentas
 
-Las ramas y reglas están activas; `testing` requiere PR/CI y `producción` requiere aprobación vigente y CI actualizado. Firebase está configurado para sus dos sitios. La API ya tiene adaptación Cloudflare Workers, pero aún no se desplegó: Wrangler no está autenticado y faltan el proyecto Supabase de testing y sus secretos. El GitHub Environment `testing` tampoco tiene variables ni secretos. El proyecto Supabase existente no se reasignó. `producción` permanece sin cambios y no se desplegará en este flujo.
+Las ramas y reglas están activas; `testing` requiere PR/CI y `producción` requiere aprobación vigente y CI actualizado. Firebase está configurado para sus dos sitios. El Worker de testing está publicado en `https://votaciones-api-testing.gala-api.workers.dev`; health/CORS pasan y los endpoints con base de datos devuelven 503 hasta instalar secretos de un Supabase persistente de testing. La integración de Supabase para previews de PR no configura por sí sola los secretos del Worker estable. El GitHub Environment `testing` no tiene variables ni secretos y Firebase testing no se ha publicado. El proyecto Supabase local existente no se reutiliza. `producción` permanece sin cambios.
 
 ### Checklist de cuentas
 
